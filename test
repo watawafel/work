@@ -1,0 +1,68 @@
+# from urllib.parse import urlencode
+import requests
+import json
+import wget
+import pandas as pd
+from pandas import ExcelWriter
+from pandas import ExcelFile
+import pypatent
+
+df = pd.read_excel('applications.xlsx', sheetname='Sheet1')
+
+
+#print(df.columns)
+
+application_number = df['application_number'][5]
+
+print(application_number=='--')
+print(application_number)
+
+x = pypatent.Search('application_number')
+print(x)
+
+# # # params = {'application _name': '"system and method for sperating ambient gravitational acceleration from a moving"'}
+# # # #application = "System and method for using a specialty vehicle data identifier to facilitate"
+# # # #search_url = "https://patents.google.com/?q=system&oq=system"
+# # #
+# # #
+# # # url = search_url + urlencode(params)
+# url ='https://developer.uspto.gov/ibd-api/v1/patent/application?searchText={0}&start=0&rows=100'.format(application_number)
+# r=requests.get(url)
+# # from uspto.peds.client import UsptoPatentExaminationDataSystemClient
+# # client = UsptoPatentExaminationDataSystemClient()
+# #
+# # result = client.download_document(type='patent', number='10032320', format='json')
+# # uspto-peds save "PP28532" --type=patent --format=xml --directory=/
+# # print(result)
+# # curl -X GET --header 'Accept: application/json' 'https://developer.uspto.gov/ibd-api/v1/patent/application?searchText=10032320&start=0&rows=100'
+# #curl -X GET 'Accept: application/json' 'https://developer.uspto.gov/ibd-api/v1/patent/package/10032320'
+# data = (r.json())
+# #print(data['response'])
+#
+# #print(data['response']['docs'])
+#
+#
+# #print(data['response']['docs'][0].keys())
+#
+# #print(data['response']['docs'][0]['patentNumber'])
+# #print(data['response']['docs'][0]['title'])
+# application_title = (data['response']['docs'][0]['title'])
+# #print(data['response']['docs'][0]['inventor'])
+# inventor_names = str((data['response']['docs'][0]['inventor'])).strip('[]')
+# #inventor_names = str(','.join(data['response']['docs'][0]['inventor']))
+# #print(data['response']['docs'][0]['archiveUrl'])
+# #url =  data['response']['docs'][0]['archiveUrl']
+# #file_name = wget.download(url)
+# from pptx import Presentation
+#
+# prs = Presentation()
+# title_slide_layout = prs.slide_layouts[0]
+# slide = prs.slides.add_slide(title_slide_layout)
+# title = slide.shapes.title
+# subtitle = slide.placeholders[1]
+#
+# title.text = application_title
+#
+# subtitle.text = inventor_names.strip()
+#
+# prs.save(str('{0}.pptx'.format(application_number)))
