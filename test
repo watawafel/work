@@ -18,4 +18,8 @@ application_title = df['title'][0]
 application_number="{:,}".format(application_number)
 
 x = pypatent.Search(application_number).as_dataframe()
-print(x.ix[application_number])
+application = (x.ix[application_number])
+print(application.index)
+print(application['title'])
+print(application['inventors'])
+print(application['abstract'])
