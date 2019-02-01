@@ -21,10 +21,12 @@ application_number="{:,}".format(application_number)
 x = pypatent.Search(application_number).as_dataframe()
 application = (x.ix[application_number])
 print(application.index)
-title = (application['title'])
-inventors = (application['inventors'])
-abstract = (application['abstract'])
-
+app_title = str((application['title']))
+app_inventors = str((application['inventors']))
+app_abstract = str((application['abstract']))
+print(type(app_title))
+print(type(app_inventors))
+print(type(app_abstract))
 
 from pptx import Presentation
 
@@ -34,7 +36,7 @@ slide = prs.slides.add_slide(title_slide_layout)
 title = slide.shapes.title
 subtitle = slide.placeholders[1]
 
-title.text = title
-subtitle.text = inventors
+title.text = app_title
+subtitle.text = app_inventors
 
 prs.save(str('{0}.pptx'.format(application_number)))
