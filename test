@@ -1,4 +1,4 @@
-# from urllib.parse import urlencode
+#from urllib.parse import urlencode
 import requests
 import json
 import wget
@@ -20,23 +20,48 @@ application_number="{:,}".format(application_number)
 
 x = pypatent.Search(application_number).as_dataframe()
 application = (x.ix[application_number])
-print(application.index)
+# print(application.index)
+
 app_title = str((application['title']))
-app_inventors = str((application['inventors']))
+app_inventors = (application['inventors'])
+print((app_inventors[1][0] + app_inventors[1][1]))
+all_inventors = ""
+for x in range(len(app_inventors)):
+    all_inventors += app_inventors[x][0] + "" + app_inventors[x][1] + "; "
+print(all_inventors)
 app_abstract = str((application['abstract']))
-print(type(app_title))
-print(type(app_inventors))
-print(type(app_abstract))
+# print(type(app_title))
+# print(type(app_inventors))
+# print(type(app_abstract))
 
 from pptx import Presentation
+from pptx.util import Inches, Pt
 
-prs = Presentation()
+path='/mnt/c/Users/wafel/desktop/work/example.pptx'
+prs = Presentation(path)
 title_slide_layout = prs.slide_layouts[0]
 slide = prs.slides.add_slide(title_slide_layout)
-title = slide.shapes.title
-subtitle = slide.placeholders[1]
 
-title.text = app_title
-subtitle.text = app_inventors
+left = top = width = height = Inches(1)
+txBox = slide.shapes.add_textbox(left, top, width, height)
+tf = txBox.text_frame
+tf.text = 'hi'
+
+title = slide.placeholders[0]
+abstract = slide.placeholders[1]
+
+title.text = "Application {0} : {1}".format(application_number, app_title)
+abstract.text = "Inventors : {0} \nAbstract : {1}".format(app_inventors, app_abstract)
+
+# p = tf.add_paragraph()
+# p.text = app_abstract
+# p.font.size = Pt(40)
+
+
+
+
+
+
+
 
 prs.save(str('{0}.pptx'.format(application_number)))
