@@ -61,7 +61,4 @@ abstract.text = "Inventors : {0} \nAbstract : {1}".format(app_inventors, app_abs
 
 
 
-
-
-
 prs.save(str('{0}.pptx'.format(application_number)))
