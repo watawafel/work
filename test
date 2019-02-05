@@ -8,57 +8,66 @@ from pandas import ExcelFile
 import pypatent
 
 df = pd.read_excel('applications.xlsx', sheetname='Sheet1')
-
-
+print('read spreadsheet . . . ')
 #print(df.columns)
 
 application_number = df['application_number'][0]
 application_title = df['title'][0]
-
+matter_number = df['matter'][0]
 #print(application_number)
 application_number="{:,}".format(application_number)
 
 x = pypatent.Search(application_number).as_dataframe()
+print('pulled data from USPTO . . . ')
 application = (x.ix[application_number])
 # print(application.index)
 
 app_title = str((application['title']))
 app_inventors = (application['inventors'])
+app_filing_date = (application['file_date'])
+app_issue_date = (application['patent_date'])
+
+
 print((app_inventors[1][0] + app_inventors[1][1]))
 all_inventors = ""
 for x in range(len(app_inventors)):
-    all_inventors += app_inventors[x][0] + "" + app_inventors[x][1] + "; "
+        all_inventors += app_inventors[x][0] + "" + app_inventors[x][1] + "; "
 print(all_inventors)
 app_abstract = str((application['abstract']))
-# print(type(app_title))
-# print(type(app_inventors))
-# print(type(app_abstract))
+        # print(type(app_title))
+        # print(type(app_inventors))
+        # print(type(app_abstract))
 
 from pptx import Presentation
 from pptx.util import Inches, Pt
+from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE
+from pptx.enum.text import PP_ALIGN
 
-path='/mnt/c/Users/wafel/desktop/work/example.pptx'
+path='/mnt/c/Users/Gabe/Desktop/work/example.pptx'
 prs = Presentation(path)
-title_slide_layout = prs.slide_layouts[0]
+title_slide_layout = prs.slide_layouts[2]
 slide = prs.slides.add_slide(title_slide_layout)
 
-left = top = width = height = Inches(1)
-txBox = slide.shapes.add_textbox(left, top, width, height)
-tf = txBox.text_frame
-tf.text = 'hi'
+# left = top = width = height = Inches(1)
+# txBox = slide.shapes.add_textbox(left, top, width, height)
+# text_frame = txBox.text_frame
+#
+# p = text_frame.paragraphs[0]
+# p.alignment = PP_ALIGN.LEFT
+# text_frame.auto_size = MSO_AUTO_SIZE.SHAPE_TO_FIT_TEXT
+# tf = p.add_run()
+# tf.text = "Application {0} : {1}".format(application_number, app_title)
+# font= tf.font
+# font.name= 'Calibri'
+# font.size = Pt(18)
 
 title = slide.placeholders[0]
 abstract = slide.placeholders[1]
 
-title.text = "Application {0} : {1}".format(application_number, app_title)
-abstract.text = "Inventors : {0} \nAbstract : {1}".format(app_inventors, app_abstract)
+title.text = "{0} \nUS Patent No. {1}".format(app_title,application_number)
+abstract.text = "Filing Information:\n  -Reference:  32060/{0}/US \n  -Filing date:  {1}\n  -Status:  {2}\n  -Inventors:   {3} \n Abstract:   {4}".format(matter_number, app_filing_date, app_issue_date, all_inventors, app_abstract)
 
 # p = tf.add_paragraph()
 # p.text = app_abstract
 # p.font.size = Pt(40)
-
-
-
-
-
 prs.save(str('{0}.pptx'.format(application_number)))
