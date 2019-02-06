@@ -24,43 +24,49 @@ print('read spreadsheet . . . {0} rows '.format((df.shape[0])))
 for i in range(df.shape[0]):
 
     application_number = df['application_number'][i]
-    title = df['title'][i]
-    print(application_number)
+    application_number=application_number.replace(',',"")
+    if(application_number != '--'):
+        title = df['title'][i]
+        print(application_number)
 
-    url = 'https://developer.uspto.gov/ibd-api/v1/patent/application?patentNumber={}&start=0&rows=100'.format(application_number)
-    # url = 'https://developer.uspto.gov/ibd-api/v1/patent/application?searchText=US{0}&start=0&rows=100'.format(application_number)
-    response = requests.get(url)
-    app_data = json.loads(response.text)
-    print(app_data)
-    #
-    if (app_data['response']['numFound']==0):
-         print("PATENT NUMBER NOT FOUND")
-         url = 'https://developer.uspto.gov/ibd-api/v1/patent/application?searchText=US{0}&start=0&rows=100'.format(application_number)
-         response1 = requests.get(url)
-         app_data = json.loads(response1.text)
+        url = 'https://developer.uspto.gov/ibd-api/v1/patent/application?patentNumber={}&start=0&rows=100'.format(application_number)
+        # url = 'https://developer.uspto.gov/ibd-api/v1/patent/application?searchText=US{0}&start=0&rows=100'.format(application_number)
+        response = requests.get(url)
+        app_data = json.loads(response.text)
+        print(app_data)
+        #
+        if (app_data['response']['numFound']==0):
+             print("PATENT NUMBER NOT FOUND")
+             url = 'https://developer.uspto.gov/ibd-api/v1/patent/application?searchText=US{0}&start=0&rows=100'.format(application_number)
+             response1 = requests.get(url)
+             app_data = json.loads(response1.text)
 
+        print(app_data)
 
-    print(app_data)
+        patent_number = (app_data['response']['docs'][0]['documentId'])
+        patent_inventors = '; '.join(map(str,app_data['response']['docs'][0]['inventor']))
+        patent_title = (app_data['response']['docs'][0]['title'])
+        patent_filing_date = str((app_data['response']['docs'][0]['applicationDate'])).replace("T00:00:00Z","")
+        patent_issue_date = str((app_data['response']['docs'][0]['publicationDate'])).replace("T00:00:00Z","")
+        patent_matter_number = df['matter'][i]
 
-    patent_number = (app_data['response']['docs'][0]['documentId'])
-    patent_inventors = '; '.join(map(str,app_data['response']['docs'][0]['inventor']))
-
-
-    patent_title = (app_data['response']['docs'][0]['title'])
-    patent_filing_date = str((app_data['response']['docs'][0]['applicationDate'])).replace("T00:00:00Z","")
-    patent_issue_date = str((app_data['response']['docs'][0]['publicationDate'])).replace("T00:00:00Z","")
-    patent_matter_number = df['matter'][i]
+    else:
+        patent_number = "--"
+        patent_inventors = ""
+        patent_title = df['title'][i]
+        patent_filing_date = str(df['filing_date'][i])
+        patent_issue_date = df['status'][i]
+        patent_matter_number = df['matter'][i]
 
     slide = prs.slides.add_slide(title_slide_layout)
-#
     title = slide.placeholders[0]
+    #title.name = "32060/{0} {1}".format(patent_matter_number,application_number)
     content = slide.placeholders[1]
-
 
     title.text = "{0} \nUS Patent No. {1}".format(patent_title,patent_number)
     content.text = "Filing Information:\n  -Reference:     32060/{0}/US \n  -Filing date:   {1}\n  -Status:        Granted on {2}\n  -Inventors:     {3} \n\nSummary:   {4}".format(patent_matter_number, patent_filing_date, patent_issue_date, patent_inventors, 'ADD SUMMARY HERE')
 
-    title.text_frame.paragraphs[0].font.size = Pt(20)
+    title.text_frame.paragraphs[0].font.size = Pt(25)
     content.text_frame.paragraphs[0].font.size = Pt(14)
 
     title.text_frame.paragraphs[0].font.color.rgb = RGBColor(0, 0 ,0)
