@@ -47,8 +47,8 @@ for i in range(df.shape[0]):
 
 
     patent_title = (app_data['response']['docs'][0]['title'])
-    patent_filing_date = (app_data['response']['docs'][0]['applicationDate'])
-    patent_issue_date = (app_data['response']['docs'][0]['publicationDate'])
+    patent_filing_date = str((app_data['response']['docs'][0]['applicationDate'])).replace("T00:00:00Z","")
+    patent_issue_date = str((app_data['response']['docs'][0]['publicationDate'])).replace("T00:00:00Z","")
     patent_matter_number = df['matter'][i]
 
     slide = prs.slides.add_slide(title_slide_layout)
@@ -58,10 +58,16 @@ for i in range(df.shape[0]):
 
 
     title.text = "{0} \nUS Patent No. {1}".format(patent_title,patent_number)
-    content.text = "Filing Information:\n  -Reference:     32060/{0}/US \n  -Filing date:   {1}\n  -Status:        {2}\n  -Inventors:     {3} \n\nSummary:   {4}".format(patent_matter_number, patent_filing_date, patent_issue_date, patent_inventors, 'ADD SUMMARY HERE')
+    content.text = "Filing Information:\n  -Reference:     32060/{0}/US \n  -Filing date:   {1}\n  -Status:        Granted on {2}\n  -Inventors:     {3} \n\nSummary:   {4}".format(patent_matter_number, patent_filing_date, patent_issue_date, patent_inventors, 'ADD SUMMARY HERE')
 
-    title.text_frame.paragraphs[0].font.size = Pt(14)
+    title.text_frame.paragraphs[0].font.size = Pt(20)
+    content.text_frame.paragraphs[0].font.size = Pt(14)
 
+    title.text_frame.paragraphs[0].font.color.rgb = RGBColor(0, 0 ,0)
+    content.text_frame.paragraphs[0].font.color.rgb = RGBColor(0, 0, 0)
+
+    title.text_frame.paragraphs[0].font.name = 'SF News Gothic'
+    content.text_frame.paragraphs[0].font.name = 'SF News Gothic'
 
     prs.save(str('{0}.pptx'.format('project')))
 #
