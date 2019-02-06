@@ -88,3 +88,4 @@ for i in range(df.shape[0]):
     content.text_frame.paragraphs[0].font.name = 'SF News Gothic'
 
     prs.save(str('{0}.pptx'.format('project')))
+    
